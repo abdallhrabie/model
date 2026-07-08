@@ -42,3 +42,24 @@ def predict_leaf_health(leaf_image: Image.Image):
     prediction = anomaly_detector.predict(features)[0]      # 1 = سليم، -1 = شاذ
     score = anomaly_detector.decision_function(features)[0]  # موجب = سليم، سالب = شاذ
     return bool(prediction == 1), float(score)
+
+
+def predict_leaves_health_batch(leaf_images):
+    """
+    نفس predict_leaf_health، لكن بتاخد كل الورق المكتشف في صورة واحدة
+    وتبعتهم للموديل في forward pass واحد بس (batch) بدل ما تكررها ورقة ورقة.
+    ده بيقلل overhead كل نداء منفصل، وبيسرّع صور الكاميرا اللي فيها ورق كتير بشكل واضح.
+    """
+    if not leaf_images:
+        return []
+
+    tensors = [feature_transform(img) for img in leaf_images]
+    batch = torch.stack(tensors).to(DEVICE)
+
+    with torch.no_grad():
+        features = feature_extractor(batch).cpu().numpy()
+
+    predictions = anomaly_detector.predict(features)       # array (n,)
+    scores = anomaly_detector.decision_function(features)  # array (n,)
+
+    return [(bool(p == 1), float(s)) for p, s in zip(predictions, scores)]

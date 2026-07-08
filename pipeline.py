@@ -11,7 +11,7 @@ from PIL import Image
 from config import MIN_LEAF_AREA_RATIO, MIN_LEAF_COMPLETENESS, MIN_LEAF_CONFIDENCE
 from external_apis import check_is_tomato, get_leaf_predictions
 from image_utils import crop_leaves_from_predictions
-from model_predict import predict_disease, predict_leaf_health
+from model_predict import predict_disease, predict_leaves_health_batch
 
 
 def process_upload_image(pil_image: Image.Image) -> Dict[str, Any]:
@@ -79,9 +79,9 @@ def process_camera_image(pil_image: Image.Image, image_bytes: bytes) -> Dict[str
         result["exclude_reason"] = "متعرفش أي ورق مقبول في الصورة (كل الورق اتفلتر أو مفيش ورق أصلًا)"
         return result
 
-    # ---- Step 3: anomaly detector لكل ورقة ----
-    for idx, leaf in enumerate(leaf_crops):
-        is_healthy, score = predict_leaf_health(leaf)
+    # ---- Step 3: anomaly detector لكل الورق دفعة واحدة (batch) ----
+    health_results = predict_leaves_health_batch(leaf_crops)
+    for idx, (is_healthy, score) in enumerate(health_results):
         result["leaves"].append({
             "leaf_index": idx,
             "is_healthy": is_healthy,

@@ -12,9 +12,9 @@ ROBOFLOW_WORKSPACE = "ahmed-ragab-t5yhy"
 ROBOFLOW_WORKFLOW_ID = "general-segmentation-api-7"
 
 # ---------------- فلترة الورق المكتشف قبل ما يدخل step 3 ----------------
-MIN_LEAF_CONFIDENCE = 0.8     # اقل ثقة مقبولة من Roboflow لكل ورقة (0 -> 1)
+MIN_LEAF_CONFIDENCE = 0.5     # اقل ثقة مقبولة من Roboflow لكل ورقة (0 -> 1)
 MIN_LEAF_AREA_RATIO = 0.01    # اقل نسبة مساحة الورقة لمساحة الصورة الكاملة
-MIN_LEAF_COMPLETENESS = 0.8   # اقل درجة اكتمال (1.0 = الورقة كاملة جوه الصورة، مش ملامسة أي حافة)
+MIN_LEAF_COMPLETENESS = 0.5   # اقل درجة اكتمال (1.0 = الورقة كاملة جوه الصورة، مش ملامسة أي حافة)
 
 DISEASE_MODEL_PATH = "models/tomato_model.h5"          # PyTorch state_dict (MobileNetV2) - لصور الـ upload
 ANOMALY_MODEL_PATH = "models/healthy_anomaly_detector.joblib"  # OneClassSVM - لصور الكاميرا
